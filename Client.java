@@ -40,11 +40,16 @@ public class Client {
     }
 
     public void beginProcessing () {
+        long timeStart = 0;
+        long timeFinish, timeElapsed;
+
         try {
             ClientListener cListen = new ClientListener (in, out);
             ClientWriter cWriter = new ClientWriter (out, reqCounts, element);
             Thread cListenThread = new Thread (cListen);
             Thread cWriterThread = new Thread (cWriter);
+        
+            timeStart = System.nanoTime ();
 
             cListenThread.start ();
             cWriterThread.start ();
@@ -54,6 +59,12 @@ public class Client {
         } catch (Exception e) {
             TimeUtils.printTimeMsg (e.toString ());;
         }
+
+        timeFinish = System.nanoTime ();
+        timeElapsed = timeFinish - timeStart;
+        timeElapsed /= 1000000;
+
+        System.out.println ("\nElapsed time (ms): " + timeElapsed);
     }
 
     public void stopConnection () {
@@ -93,11 +104,13 @@ public class Client {
         System.out.println ("which will send requests: " + client.getReqCount ());
         System.out.println ("");
 
-        boolean success = client.startConnection( "192.168.136.1", 6666);
+        boolean success = client.startConnection( "192.168.1.5", 6666);
 
         if (success) {
             System.out.print (TimeUtils.getNowString () + "Successfully connected to bonding Server. Press enter to begin processing requests...");
             scanny.nextLine ();
+
+
 
             client.beginProcessing ();
             client.stopConnection ();

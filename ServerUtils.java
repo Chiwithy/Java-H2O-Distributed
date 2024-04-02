@@ -8,6 +8,7 @@ public class ServerUtils {
     private static ArrayList<Integer> os = new ArrayList<> ();
     private static ArrayList<String> completedBonds = new ArrayList<> ();
     private static boolean mainDone = false;
+    private static long timeStart = -1;
 
     public static void bond () {
         int h1, h2, o1;
@@ -30,6 +31,9 @@ public class ServerUtils {
     }
 
     public static void addE (int eId, int element) {
+        if (ServerUtils.timeStart < 0)
+            timeStart = System.nanoTime ();
+        
         if (element == 0) {
             ServerUtils.addH (eId);
 
@@ -46,14 +50,6 @@ public class ServerUtils {
             else
                 TimeUtils.printTimeMsg("Received bond request for O" + eId);
         }
-    }
-
-    private static void addH (int hId) {
-        synchronized (hLock) { hs.add (hId); }
-    }
-
-    private static void addO (int oId) {
-        synchronized (oLock) { os.add (oId); }
     }
 
     public static boolean hasNewBond (int printIndex) {
@@ -83,6 +79,10 @@ public class ServerUtils {
         synchronized (oLock) { return os.size (); }
     }
 
+    public static long getTimeStart () {
+        return ServerUtils.timeStart;
+    }
+
     public static boolean canBond () {
         synchronized (hLock) {
             synchronized (oLock) {
@@ -102,6 +102,14 @@ public class ServerUtils {
                 mainDone = true;
                 addBondedString ("fin");
         }
+    }
+
+    private static void addH (int hId) {
+        synchronized (hLock) { hs.add (hId); }
+    }
+
+    private static void addO (int oId) {
+        synchronized (oLock) { os.add (oId); }
     }
 
     private static void addBondedString (int h1, int h2, int o1) {

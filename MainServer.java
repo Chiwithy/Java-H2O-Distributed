@@ -29,6 +29,9 @@ public class MainServer implements Runnable {
 
     @Override
     public void run () {
+        long timeStart = 0;
+        long timeFinish, timeElapsed;
+        
         try {
             while (!hConnected || !oConnected) {
                 Socket clientSocket = serverSocket.accept ();
@@ -70,6 +73,13 @@ public class MainServer implements Runnable {
         } catch (Exception e) {
             TimeUtils.printTimeMsg (e.toString ());;
         }
+
+        timeStart = ServerUtils.getTimeStart ();
+        timeFinish = System.nanoTime ();
+        timeElapsed = timeFinish - timeStart;
+        timeElapsed /= 1000000;
+
+        System.out.println ("\nElapsed time (ms): " + timeElapsed);
     }
 
     public static void main (String[] args) {
